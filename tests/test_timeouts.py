@@ -1,7 +1,7 @@
 import pytest
 
 import httpx
-
+import sys
 
 @pytest.mark.anyio
 async def test_read_timeout(server):
@@ -13,6 +13,10 @@ async def test_read_timeout(server):
 
 
 @pytest.mark.anyio
+@pytest.mark.xfail(
+    sys.platform.startswith("win"),
+    reason="Windows IOCP cannot enforce per-write timeouts reliably.",
+)
 async def test_write_timeout(server):
     timeout = httpx.Timeout(None, write=1e-6)
 
